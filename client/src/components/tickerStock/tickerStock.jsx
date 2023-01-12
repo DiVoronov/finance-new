@@ -1,39 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { StyledTickerStock } from './tickerStock.style.js';
+import { StyledGrid, StyledTickerStock } from './tickerStock.style.js';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { useDispatch, useSelector } from 'react-redux';
 import { pushFavoriteTickersChanges, removeFavoriteTickersChanges } from '../../app/slices/favoriteTickersSlice.js';
-
-
-// const Ticker = ( className, children ) => {
-
-//   return (
-//     <StyledTickerStock>
-//       <Box 
-//         component='div'
-//         className={className}
-//       >
-//         { ...children }
-//       </Box>
-//     </StyledTickerStock>
-//   )
-// };
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export const TickerStock = ({ informationStock, list }) => {
 
-  //{"ticker":"GOOGL",
-  //"exchange":"NASDAQ",
-  //"price":237.08,
-  //"change":154.38,"
-  //change_percent":0.10,
-  //"dividend":0.46,
-  //"yield":1.18,"
-  //last_trade_time":"2021-04-30T11:53:21.000Z"},
+  const previousListStocks = useSelector( state => state.tickers.previousState );
 
-  const backgroudTickers = {
+  const previousInformationStock = previousListStocks.filter( iter => iter.ticker === informationStock.ticker )[0];
+
+  function increaseOrDecrease( value ) {
+    if (previousInformationStock[value] <= informationStock[value]) {
+      return {
+        background: '#c3fcbc',
+        color: '#2d740d',
+        grow: true,
+      };
+    } else {
+      return {
+        background: '#fee2e2',
+        color: '#c11d0d',
+        grow: false,
+      };
+    }
+  };
+
+  const backgroundTickers = {
     AAPL: '#003049',
     GOOGL: '#d62828',
     MSFT: '#f77f00',
@@ -42,25 +40,41 @@ export const TickerStock = ({ informationStock, list }) => {
     TSLA: '#e63946',
   };
 
+  const [ classAddTicker, setClassAddTicker ] = useState('');
+  const [ classRemoveTicker, setClassRemoveTicker ] = useState('');
+
   const dispatch = useDispatch();
   const addTicker = () => {
     dispatch(pushFavoriteTickersChanges(informationStock['ticker']));
+    setClassAddTicker('classAddTicker');
+    setTimeout( () => {
+      setClassAddTicker('');
+    }, 500)
   };
   const removeTicker = () => {
-    dispatch(removeFavoriteTickersChanges(informationStock['ticker']));
+    setClassRemoveTicker('classRemoveTicker');
+    setTimeout( () => {
+      setClassRemoveTicker('');
+      dispatch(removeFavoriteTickersChanges(informationStock['ticker']));
+    }, 500)
   };
 
   return (
-    <Box component='div' sx={{maxWidth: '90%', flexGrow: 1, m: 'auto'}}>
-      <Grid container spacing={0}>
+    <StyledGrid>
+      <Grid container spacing={0} className={`${classAddTicker} ${classRemoveTicker}`}>
         <Grid xs={2}>
-          <StyledTickerStock theme={{background: backgroudTickers[informationStock['ticker']], color: '#fff'}}>
+          <StyledTickerStock 
+            theme={{
+              background: backgroundTickers[informationStock['ticker']], 
+              color: '#fff',
+              
+            }}>
             <Box className='tickerName'>{informationStock['ticker']}</Box>
           </StyledTickerStock>
         </Grid>
         <Grid xs={3}>
-          <StyledTickerStock theme={{color: 'black'}}>
-            <Box className='price'>
+          <StyledTickerStock theme={{...increaseOrDecrease('price')}} >
+            <Box className={`price`}>
               ${informationStock['price']}
             </Box>
           </StyledTickerStock>
@@ -69,16 +83,30 @@ export const TickerStock = ({ informationStock, list }) => {
           <StyledTickerStock></StyledTickerStock>
         </Grid>
         <Grid xs={2}>
-          <StyledTickerStock>
-            <Box className='yield'>
+          <StyledTickerStock theme={{...increaseOrDecrease('yield')}}>
+            <Box className={`yield`}>
               {informationStock['yield']}
+              { 
+                increaseOrDecrease('yield').grow
+                ?
+                <ArrowDropUpIcon/>
+                :
+                <ArrowDropDownIcon/>
+              }
             </Box>
           </StyledTickerStock>
         </Grid>
         <Grid xs={2}>
-          <StyledTickerStock>
-            <Box className='change_percent'>
+          <StyledTickerStock theme={{...increaseOrDecrease('change_percent')}}>
+            <Box className={`change_percent`}>
               {informationStock['change_percent']}
+              { 
+                increaseOrDecrease('change_percent').grow
+                ?
+                <ArrowDropUpIcon/>
+                :
+                <ArrowDropDownIcon/>
+              }
             </Box>
           </StyledTickerStock>
         </Grid>
@@ -105,6 +133,6 @@ export const TickerStock = ({ informationStock, list }) => {
         </Grid>
       </Grid>
       
-    </Box>
+    </StyledGrid>
   );
 };

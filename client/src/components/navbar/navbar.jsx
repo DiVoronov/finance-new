@@ -7,7 +7,7 @@ export const Navbar = () => {
   const linkList = [ 
     {value: 'All stocks', link: '/'}, 
     {value: 'Favorite', link: '/favorite'} 
-  ]
+  ];
 
   return (
     <Box 
@@ -17,7 +17,6 @@ export const Navbar = () => {
         display: 'flex', 
         justifyContent: 'center',
         fontFamily: 'Open Sans',
-        // ['&: a']: {textDecoration: 'none'}
       }}
     >
       {
