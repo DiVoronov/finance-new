@@ -3,6 +3,7 @@ import { createContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import { requestStockChanges } from '../slices/tickersSlice.js';
+import { setErrorTrue } from '../slices/errorSlice.js';
 
 export const TickerContext = createContext(null);
 
@@ -22,10 +23,12 @@ export const TickerProvider = ({ children }) => {
         dispatch(requestStockChanges(ticker));
       } );
     } catch (error) {
-      console.log(error.message);
-    }
+      error && dispatch(setErrorTrue(''));
+    };
 
-    return socket.send('disconnect')
+    return function cleanSocket() {
+      socket.close('disconnect');
+    };
   }, []);
 
   return (

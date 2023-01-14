@@ -119,12 +119,14 @@ export const TickerStock = ({ informationStock, list }) => {
               <AddCircleOutlineIcon 
                 className='addToFavorite'
                 color='disabled'
+                aria-label="addCircleOutlineIcon"
                 onClick={addTicker}
               />
               :
               <RemoveCircleOutlineIcon 
                 className='addToFavorite'
                 color='disabled'
+                aria-label="removeCircleOutlineIcon"
                 onClick={removeTicker}
               />
             }

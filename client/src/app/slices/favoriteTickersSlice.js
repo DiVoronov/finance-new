@@ -19,7 +19,6 @@ export const favoriteTickersSlice = createSlice({
     },
     removeFavoriteTickersChanges: (state, action) => {
       const newState = state.filter( iter => iter !== action.payload );
-      console.log(newState);
       state = newState;
       return state;
     },

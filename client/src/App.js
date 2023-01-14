@@ -9,7 +9,7 @@ import { TickerProvider } from './app/context/tickerContext';
 function App() {
   return (
     <Box className="App">
-      <TickerProvider>
+      <TickerProvider id='test-tickerProvider'>
         <BrowserRouter basename={process.env.PUBLIC_URL}>
           <Navbar/>
           <Routes>
